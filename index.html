@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energia Rutera | Mapa del Sabor</title>
+    
+    <!-- 1. ESTILOS: Leaflet (Mapa) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- 2. ESTILOS: Fuente y Reset básico -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f0f0f;
+            color: #ffffff;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 60px 20px 20px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #f97316, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            max-width: 600px;
+            margin: 0 auto 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(249, 115, 22, 0.2);
+            color: #f97316;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid #f97316;
+        }
+
+        /* Layout principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .col-izq {
+            flex: 1 1 600px;
+        }
+
+        .col-der {
+            flex: 1 1 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Mapa */
+        .mapa-caja {
+            background: #1c1c1c;
+            border-radius: 16px;
+            padding: 10px;
+            border: 1px solid #2a2a2a;
+        }
+
+        #mapa {
+            height: 500px;
+            border-radius: 12px;
+            z-index: 1;
+        }
+
+        /* Widget Instagram */
+        .widget-caja {
+            background: #1c1c1c;
+            border-radius: 16px;
+            padding: 15px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .widget-caja h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #f97316;
+        }
+
+        .elfsight-app {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 12px;
+        }
+
+        /* Formulario */
+        .form-caja {
+            background: #1c1c1c;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .form-caja h2 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            color: #f97316;
+        }
+
+        .form-caja p {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        input, button {
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            background: #0f0f0f;
+            color: white;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input::placeholder {
+            color: #666;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f97316, #ef4444);
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s;
+            color: white;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+        }
+
+        .nota {
+            font-size: 0.7rem;
+            color: #555;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            #mapa {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO -->
+    <div class="hero">
+        <span class="badge">🌍 COMIDA &amp; VIAJES</span>
+        <h1>El Mapa del Sabor</h1>
+        <p>Explorá los restaurantes que hemos probado alrededor del mundo. ¡Filtrá, guardá y pedí tu guía personalizada!</p>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="container">
+        
+        <!-- COLUMNA IZQUIERDA: MAPA -->
+        <div class="col-izq">
+            <div class="mapa-caja">
+                <div id="mapa"></div>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: WIDGET + FORM -->
+        <div class="col-der">
+            
+            <!-- FEED DE INSTAGRAM -->
+            <div class="widget-caja">
+                <h2>📸 Últimas aventuras en Instagram</h2>
+                <!-- ⚠️ REEMPLAZA ESTE SCRIPT CON EL ID DE TU WIDGET DE ELFSIGHT -->
+                <script src="https://static.elfsight.com/platform/platform.js" async></script>
+                <div class="elfsight-app" data-elfsight-app-lazy></div>
+                <!-- EJEMPLO: Si tu ID es 12345, sería: data-elfsight-app="12345" -->
+            </div>
+
+            <!-- FORMULARIO DE CAPTURA -->
+            <div class="form-caja">
+                <h2>📩 ¿Querés la guía secreta?</h2>
+                <p>Recibí mi lista de restaurantes favoritos en PDF cuando te suscribas.</p>
+                
+                <!-- FORMSPREE GRATUITO (50 envíos/mes) -->
+                <form action="https://formspree.io/f/TU_FORM_ID" method="POST">
+                    <input type="text" name="nombre" placeholder="Tu nombre" required>
+                    <input type="email" name="email" placeholder="Tu correo electrónico" required>
+                    <input type="text" name="destino" placeholder="¿Próximo destino soñado?" required>
+                    <button type="submit">Quiero mi guía gratis</button>
+                    <p class="nota">Sin spam. Solo deliciosas recomendaciones.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        © 2024 Energia Rutera · Construido con hambre y amor por los viajes.
+    </footer>
+
+    <!-- ============ SCRIPTS ============ -->
+    
+    <!-- 1. Leaflet JS (Mapa) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- 2. Lógica del Mapa -->
+    <script>
+        // Inicializar el mapa (centrado en el mundo, vista general)
+        const map = L.map('mapa').setView([20, 0], 2);
+
+        // Capa del mapa (estilo oscuro para que combine)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
+
+        // ===== BASE DE DATOS MANUAL (Simula Google Sheets) =====
+        // Aquí pegarías los datos que el cliente llene.
+        // Puedes conectar esto a Google Sheets con Sheet.best en el futuro.
+        
+        const restaurantes = [
+            {
+                nombre: "Ichiran Ramen",
+                ciudad: "Tokio, Japón",
+                lat: 35.6762,
+                lon: 139.6503,
+                nota: "El mejor ramen del mundo. Pedir en la máquina expendedora.",
+                ig: "https://instagram.com/p/ejemplo1"
+            },
+            {
+                nombre: "Pujol",
+                ciudad: "CDMX, México",
+                lat: 19.4326,
+                lon: -99.1332,
+                nota: "Alta cocina mexicana. Imperdible el mole madre.",
+                ig: "https://instagram.com/p/ejemplo2"
+            },
+            {
+                nombre: "Gelateria Dondoli",
+                ciudad: "San Gimignano, Italia",
+                lat: 43.4678,
+                lon: 11.0433,
+                nota: "Gelato campeón mundial. Probé el de azafrán.",
+                ig: "https://instagram.com/p/ejemplo3"
+            },
+            {
+                nombre: "Nusantara",
+                ciudad: "Bali, Indonesia",
+                lat: -8.5069,
+                lon: 115.2625,
+                nota: "Warung local con el mejor Nasi Goreng.",
+                ig: "https://instagram.com/p/ejemplo4"
+            }
+        ];
+
+        // Icono personalizado (tenedor y cuchillo)
+        const iconoComida = L.divIcon({
+            html: '🍜',
+            className: 'emoji-icon',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
+        });
+
+        // Agregar marcadores al mapa
+        restaurantes.forEach(rest => {
+            const marker = L.marker([rest.lat, rest.lon], { icon: iconoComida }).addTo(map);
+            
+            // Ventana emergente al hacer clic
+            marker.bindPopup(`
+                <div style="font-family: sans-serif; color: #333;">
+                    <h3 style="margin:0 0 5px; color:#f97316;">${rest.nombre}</h3>
+                    <p style="margin:0 0 8px; font-weight:bold;">📍 ${rest.ciudad}</p>
+                    <p style="margin:0 0 10px; font-size:0.9rem;">${rest.nota}</p>
+                    <a href="${rest.ig}" target="_blank" style="background:#f97316; color:white; padding:5px 15px; border-radius:20px; text-decoration:none; font-size:0.8rem; display:inline-block;">Ver en Instagram 📸</a>
+                </div>
+            `);
+        });
+    </script>
+
+</body>
+</html>
