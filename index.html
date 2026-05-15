@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-AR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Energia Rutera | Mapa del Sabor</title>
-    
-    <!-- 1. ESTILOS: Leaflet (Mapa) -->
+    <title>Energía Rutera | Viajes y gastronomía</title>
+
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
-    <!-- 2. ESTILOS: Fuente y Reset básico -->
+
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    
+
     <style>
         * {
             margin: 0;
@@ -21,7 +21,35 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0f0f0f;
-            color: #ffffff;
+            color: #fff;
+            scroll-behavior: smooth;
+        }
+
+        /* Navegación */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(15,15,15,0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #2a2a2a;
+            z-index: 1000;
+        }
+
+        nav a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #f97316;
         }
 
         /* Hero */
@@ -31,6 +59,18 @@
             background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
         }
 
+        .hero .badge {
+            display: inline-block;
+            background: rgba(249,115,22,0.2);
+            color: #f97316;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid #f97316;
+            margin-bottom: 15px;
+        }
+
         .hero h1 {
             font-size: 3.5rem;
             font-weight: 800;
@@ -38,50 +78,51 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .hero p {
             font-size: 1.2rem;
             color: #a0a0a0;
             max-width: 600px;
-            margin: 0 auto 10px;
-        }
-
-        .badge {
-            display: inline-block;
-            background: rgba(249, 115, 22, 0.2);
-            color: #f97316;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border: 1px solid #f97316;
-        }
-
-        /* Layout principal */
-        .container {
-            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+        }
+
+        /* Secciones generales */
+        section {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #f97316;
+            position: relative;
+            display: inline-block;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: #ef4444;
+            border-radius: 2px;
+        }
+
+        /* Mapa + formulario */
+        .mapa-widgets {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
         }
 
-        .col-izq {
+        .mapa-col {
             flex: 1 1 600px;
-        }
-
-        .col-der {
-            flex: 1 1 350px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* Mapa */
-        .mapa-caja {
             background: #1c1c1c;
             border-radius: 16px;
             padding: 10px;
@@ -94,27 +135,10 @@
             z-index: 1;
         }
 
-        /* Widget Instagram */
-        .widget-caja {
-            background: #1c1c1c;
-            border-radius: 16px;
-            padding: 15px;
-            border: 1px solid #2a2a2a;
+        .form-col {
+            flex: 1 1 350px;
         }
 
-        .widget-caja h2 {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: #f97316;
-        }
-
-        .elfsight-app {
-            max-height: 400px;
-            overflow-y: auto;
-            border-radius: 12px;
-        }
-
-        /* Formulario */
         .form-caja {
             background: #1c1c1c;
             border-radius: 16px;
@@ -122,16 +146,9 @@
             border: 1px solid #2a2a2a;
         }
 
-        .form-caja h2 {
-            font-size: 1.3rem;
-            margin-bottom: 5px;
+        .form-caja h3 {
             color: #f97316;
-        }
-
-        .form-caja p {
-            font-size: 0.9rem;
-            color: #a0a0a0;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         form {
@@ -140,7 +157,7 @@
             gap: 12px;
         }
 
-        input, button {
+        input, button, select, textarea {
             padding: 14px;
             border-radius: 10px;
             border: 1px solid #333;
@@ -150,7 +167,7 @@
             font-family: 'Inter', sans-serif;
         }
 
-        input::placeholder {
+        input::placeholder, textarea::placeholder {
             color: #666;
         }
 
@@ -160,7 +177,6 @@
             font-weight: 700;
             cursor: pointer;
             transition: transform 0.2s;
-            color: white;
         }
 
         button:hover {
@@ -170,19 +186,382 @@
         .nota {
             font-size: 0.7rem;
             color: #555;
-            margin-top: 10px;
             text-align: center;
         }
 
-        /* Footer */
+        /* Guías */
+        .guias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .guia-card {
+            background: #1c1c1c;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #2a2a2a;
+        }
+
+        .guia-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .guia-card a {
+            display: inline-block;
+            margin-top: 10px;
+            background: #f97316;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Blog recetas */
+        .recetas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .receta-card {
+            background: #1c1c1c;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #2a2a2a;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .receta-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .receta-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .receta-card .info {
+            padding: 15px;
+        }
+
+        .receta-card h3 {
+            margin-bottom: 5px;
+        }
+
+        /* Galería */
+        .galeria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .galeria-grid img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .galeria-grid img:hover {
+            opacity: 0.8;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+        }
+
+        .lightbox:target {
+            display: flex;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            text-decoration: none;
+        }
+
+        /* Historias */
+        .historias-destacadas {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .historia-circulo {
+            text-align: center;
+        }
+
+        .historia-circulo img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #f97316;
+            padding: 3px;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .historia-circulo:hover img {
+            transform: scale(1.1);
+        }
+
+        .historia-circulo p {
+            margin-top: 8px;
+            font-size: 0.8rem;
+        }
+
+        /* Test */
+        #test {
+            background: #1c1c1c;
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid #2a2a2a;
+            text-align: center;
+        }
+
+        .pregunta {
+            margin: 20px 0;
+        }
+
+        .pregunta p {
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .opciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .opcion {
+            background: #0f0f0f;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 1px solid #333;
+            transition: all 0.3s;
+        }
+
+        .opcion.seleccionada {
+            background: #f97316;
+            border-color: #f97316;
+            color: #000;
+            font-weight: 600;
+        }
+
+        #resultado {
+            margin-top: 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: none;
+        }
+
+        #resultado.mostrar {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* PRÓXIMOS DESTINOS */
+        .cuenta-regresiva-caja {
+            background: #1c1c1c;
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid #2a2a2a;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .reloj {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .reloj .bloque {
+            background: #0f0f0f;
+            padding: 15px 10px;
+            border-radius: 12px;
+            min-width: 70px;
+        }
+
+        .reloj .numero {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #f97316;
+            display: block;
+        }
+
+        .reloj .etiqueta {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #aaa;
+        }
+
+        .sugerencia-form {
+            max-width: 400px;
+            margin: 20px auto 0;
+        }
+
+        /* DIARIO DE VIAJE (TIMELINE) */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #f97316;
+            transform: translateX(-50%);
+        }
+
+        .entrada {
+            position: relative;
+            width: 50%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .entrada.izquierda {
+            left: 0;
+            text-align: right;
+        }
+
+        .entrada.derecha {
+            left: 50%;
+            text-align: left;
+        }
+
+        .entrada .contenido {
+            background: #1c1c1c;
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .entrada .contenido img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .entrada .contenido h3 {
+            color: #f97316;
+            margin-bottom: 5px;
+        }
+
+        .entrada .contenido p {
+            font-size: 0.9rem;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+
+        .entrada .contenido a {
+            color: #f97316;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Puntito en la línea */
+        .entrada::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            width: 12px;
+            height: 12px;
+            background: #f97316;
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        .entrada.izquierda::after {
+            right: -6px;
+        }
+
+        .entrada.derecha::after {
+            left: -6px;
+        }
+
+        /* Responsive timeline */
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+            .entrada {
+                width: 100%;
+                padding-left: 50px;
+                padding-right: 0;
+                text-align: left;
+            }
+            .entrada.izquierda, .entrada.derecha {
+                left: 0;
+            }
+            .entrada.izquierda::after, .entrada.derecha::after {
+                left: 14px;
+                right: auto;
+            }
+        }
+
+        /* Colaboraciones */
+        .colab-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
         footer {
             text-align: center;
             padding: 30px;
             color: #666;
             font-size: 0.8rem;
+            border-top: 1px solid #2a2a2a;
+            margin-top: 40px;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2.5rem;
@@ -195,135 +574,388 @@
 </head>
 <body>
 
-    <!-- HERO -->
-    <div class="hero">
-        <span class="badge">🌍 COMIDA &amp; VIAJES</span>
-        <h1>El Mapa del Sabor</h1>
-        <p>Explorá los restaurantes que hemos probado alrededor del mundo. ¡Filtrá, guardá y pedí tu guía personalizada!</p>
-    </div>
+    <!-- Navegación -->
+    <nav>
+        <a href="#mapa-section">Mapa</a>
+        <a href="#guias">Guías</a>
+        <a href="#recetas">Recetas</a>
+        <a href="#galeria">Galería</a>
+        <a href="#historias">Historias</a>
+        <a href="#test">Test</a>
+        <a href="#proximos">Próximos</a>
+        <a href="#diario">Diario</a>
+        <a href="#colaboraciones">Colaboraciones</a>
+    </nav>
 
-    <!-- CONTENIDO -->
-    <div class="container">
-        
-        <!-- COLUMNA IZQUIERDA: MAPA -->
-        <div class="col-izq">
-            <div class="mapa-caja">
-                <div id="mapa"></div>
-            </div>
+    <!-- Hero -->
+    <header class="hero">
+        <span class="badge">🇦🇷 DE ARGENTINA AL MUNDO</span>
+        <h1>El Mapa del Hambre</h1>
+        <p>Anita recorre el planeta a puro sabor. Comida callejera, mercados y restaurantes que son una locura. ¿Te venís?</p>
+    </header>
+
+    <!-- SECCIÓN: MAPA + SUSCRIPCIÓN -->
+    <section id="mapa-section" class="mapa-widgets">
+        <div class="mapa-col">
+            <div id="mapa"></div>
         </div>
-
-        <!-- COLUMNA DERECHA: WIDGET + FORM -->
-        <div class="col-der">
-            
-            <!-- FEED DE INSTAGRAM -->
-            <div class="widget-caja">
-                <h2>📸 Últimas aventuras en Instagram</h2>
-                <!-- ⚠️ REEMPLAZA ESTE SCRIPT CON EL ID DE TU WIDGET DE ELFSIGHT -->
-                <script src="https://static.elfsight.com/platform/platform.js" async></script>
-                <div class="elfsight-app" data-elfsight-app-lazy></div>
-                <!-- EJEMPLO: Si tu ID es 12345, sería: data-elfsight-app="12345" -->
-            </div>
-
-            <!-- FORMULARIO DE CAPTURA -->
+        <div class="form-col">
             <div class="form-caja">
-                <h2>📩 ¿Querés la guía secreta?</h2>
-                <p>Recibí mi lista de restaurantes favoritos en PDF cuando te suscribas.</p>
-                
-                <!-- FORMSPREE GRATUITO (50 envíos/mes) -->
+                <h3>📩 ¿Querés la guía secreta?</h3>
+                <p>Dejá tu mail y te mando las mejores parrillas de Buenos Aires en PDF. Cero spam, solo data posta.</p>
                 <form action="https://formspree.io/f/TU_FORM_ID" method="POST">
                     <input type="text" name="nombre" placeholder="Tu nombre" required>
                     <input type="email" name="email" placeholder="Tu correo electrónico" required>
-                    <input type="text" name="destino" placeholder="¿Próximo destino soñado?" required>
-                    <button type="submit">Quiero mi guía gratis</button>
-                    <p class="nota">Sin spam. Solo deliciosas recomendaciones.</p>
+                    <input type="text" name="destino" placeholder="¿Próximo destino soñado?">
+                    <button type="submit">Quiero la data</button>
+                    <p class="nota">Tranqui, no comparto tu mail con nadie.</p>
                 </form>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- SECCIÓN: GUÍAS DE VIAJE -->
+    <section id="guias">
+        <h2>📚 Guías de viaje</h2>
+        <div class="guias-grid">
+            <div class="guia-card">
+                <img src="https://picsum.photos/400/300?random=10" alt="Parrilla argentina">
+                <h3>10 Parrillas Imperdibles</h3>
+                <p>Buenos Aires, Rosario, Córdoba.</p>
+                <a href="#" target="_blank">Descargar PDF</a>
+            </div>
+            <div class="guia-card">
+                <img src="https://picsum.photos/400/300?random=11" alt="Comida callejera">
+                <h3>Comida Callejera en CABA</h3>
+                <p>Choripán, bondiola y más.</p>
+                <a href="#" target="_blank">Descargar PDF</a>
+            </div>
+            <div class="guia-card">
+                <img src="https://picsum.photos/400/300?random=12" alt="Mercados">
+                <h3>Mercados de Palermo</h3>
+                <p>Food trucks y puestos gourmet.</p>
+                <a href="#" target="_blank">Descargar PDF</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN: RECETAS VIAJERAS -->
+    <section id="recetas">
+        <h2>🍳 Recetas viajeras</h2>
+        <div class="recetas-grid">
+            <div class="receta-card" onclick="abrirReceta('receta1')">
+                <img src="https://picsum.photos/400/250?random=20" alt="Milanesa napolitana">
+                <div class="info">
+                    <h3>Milanesa a la napolitana</h3>
+                    <p>El clásico argentino que aprendí en casa.</p>
+                </div>
+            </div>
+            <div class="receta-card" onclick="abrirReceta('receta2')">
+                <img src="https://picsum.photos/400/250?random=21" alt="Pad thai">
+                <div class="info">
+                    <h3>Pad Thai callejero</h3>
+                    <p>Tal cual lo preparan en Bangkok.</p>
+                </div>
+            </div>
+            <div class="receta-card" onclick="abrirReceta('receta3')">
+                <img src="https://picsum.photos/400/250?random=22" alt="Empanadas">
+                <div class="info">
+                    <h3>Empanadas de carne</h3>
+                    <p>La receta de la abuela, jugosas y con mucho gusto.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modales de recetas ocultos -->
+        <div id="modal-receta1" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:3000; overflow:auto;">
+            <div style="max-width:600px; margin:50px auto; padding:20px; background:#1c1c1c; border-radius:16px; position:relative;">
+                <span onclick="cerrarReceta()" style="position:absolute; top:15px; right:20px; font-size:2rem; cursor:pointer; color:#f97316;">&times;</span>
+                <h2>🥩 Milanesa a la napolitana</h2>
+                <p><strong>Ingredientes:</strong> 4 milanesas de ternera, 200g de jamón cocido, 200g de mozzarella, salsa de tomate, aceite, orégano, ajo.</p>
+                <p><strong>Preparación:</strong> Dorá las milanesas en aceite bien caliente. Pasalas a una fuente, cubrí con salsa de tomate, jamón y queso. Gratiná en horno fuerte hasta que el queso burbujee. Serví con papas fritas bien crocantes.</p>
+                <p><em>Tip viajero:</em> en el Barrio de La Boca encontrás la mejor versión de este plato.</p>
+            </div>
+        </div>
+        <div id="modal-receta2" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:3000; overflow:auto;">
+            <div style="max-width:600px; margin:50px auto; padding:20px; background:#1c1c1c; border-radius:16px; position:relative;">
+                <span onclick="cerrarReceta()" style="position:absolute; top:15px; right:20px; font-size:2rem; cursor:pointer; color:#f97316;">&times;</span>
+                <h2>🍜 Pad Thai callejero</h2>
+                <p><strong>Ingredientes:</strong> fideos de arroz, pollo o camarones, huevo, maní, brotes de soja, salsa de pescado, tamarindo, lima, azúcar.</p>
+                <p><strong>Preparación:</strong> Remojá los fideos. Salteá la proteína, sumá los fideos, el huevo y los brotes. Mezclá la salsa (tamarindo, pescado, azúcar) y cociná a fuego fuerte. Serví con maní triturado y lima.</p>
+                <p><em>Dato viajero:</em> Los puestitos de Bangkok lo preparan en 3 minutos. ¡Una locura!</p>
+            </div>
+        </div>
+        <div id="modal-receta3" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:3000; overflow:auto;">
+            <div style="max-width:600px; margin:50px auto; padding:20px; background:#1c1c1c; border-radius:16px; position:relative;">
+                <span onclick="cerrarReceta()" style="position:absolute; top:15px; right:20px; font-size:2rem; cursor:pointer; color:#f97316;">&times;</span>
+                <h2>🥟 Empanadas de carne</h2>
+                <p><strong>Ingredientes:</strong> 1 kg de carne picada, cebolla, pimiento, huevo duro, aceitunas, comino, pimentón, masa para empanadas.</p>
+                <p><strong>Preparación:</strong> Rehogá la cebolla y el pimiento, sumá la carne y los condimentos. Dejá enfriar, agregá huevo picado y aceitunas. Rellená las tapas, cerrá con repulgue y horneá o fríalas.</p>
+                <p><em>Imperdible:</em> en Salta las hacen bien picantes, ¡un viaje de sabores!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN: GALERÍA DE FOTOS -->
+    <section id="galeria">
+        <h2>📷 Platos del mundo</h2>
+        <div class="galeria-grid">
+            <a href="#img1"><img src="https://picsum.photos/300/300?random=30" alt="Ceviche peruano"></a>
+            <a href="#img2"><img src="https://picsum.photos/300/300?random=31" alt="Arepas colombianas"></a>
+            <a href="#img3"><img src="https://picsum.photos/300/300?random=32" alt="Asado argentino"></a>
+            <a href="#img4"><img src="https://picsum.photos/300/300?random=33" alt="Dim sum chino"></a>
+            <a href="#img5"><img src="https://picsum.photos/300/300?random=34" alt="Pizza italiana"></a>
+            <a href="#img6"><img src="https://picsum.photos/300/300?random=35" alt="Tacos mexicanos"></a>
+        </div>
+
+        <!-- Lightbox ocultos -->
+        <div id="img1" class="lightbox"><a href="#" class="close">&times;</a><img src="https://picsum.photos/800/600?random=30" alt="Ceviche"></div>
+        <div id="img2" class="lightbox"><a href="#" class="close">&times;</a><img src="https://picsum.photos/800/600?random=31" alt="Arepas"></div>
+        <div id="img3" class="lightbox"><a href="#" class="close">&times;</a><img src="https://picsum.photos/800/600?random=32" alt="Asado"></div>
+        <div id="img4" class="lightbox"><a href="#" class="close">&times;</a><img src="https://picsum.photos/800/600?random=33" alt="Dim sum"></div>
+        <div id="img5" class="lightbox"><a href="#" class="close">&times;</a><img src="https://picsum.photos/800/600?random=34" alt="Pizza"></div>
+        <div id="img6" class="lightbox"><a href="#" class="close">&times;</a><img src="https://picsum.photos/800/600?random=35" alt="Tacos"></div>
+    </section>
+
+    <!-- SECCIÓN: HISTORIAS DESTACADAS -->
+    <section id="historias">
+        <h2>🌟 Historias destacadas</h2>
+        <div class="historias-destacadas">
+            <a href="https://instagram.com/energiarutera" target="_blank" class="historia-circulo">
+                <img src="https://picsum.photos/200/200?random=40" alt="Asado">
+                <p>Asados</p>
+            </a>
+            <a href="https://instagram.com/energiarutera" target="_blank" class="historia-circulo">
+                <img src="https://picsum.photos/200/200?random=41" alt="Calle">
+                <p>Callejeros</p>
+            </a>
+            <a href="https://instagram.com/energiarutera" target="_blank" class="historia-circulo">
+                <img src="https://picsum.photos/200/200?random=42" alt="Mercados">
+                <p>Mercados</p>
+            </a>
+            <a href="https://instagram.com/energiarutera" target="_blank" class="historia-circulo">
+                <img src="https://picsum.photos/200/200?random=43" alt="Tacos">
+                <p>Mex</p>
+            </a>
+        </div>
+        <p style="text-align:center; margin-top:15px; font-size:0.9rem; color:#aaa;">Clickeá en cada círculo para ver las historias guardadas.</p>
+    </section>
+
+    <!-- SECCIÓN: TEST DEL VIAJERO GASTRONÓMICO -->
+    <section id="test">
+        <h2>🧭 ¿Qué viajero gastronómico sos?</h2>
+        <div id="preguntas-test">
+            <div class="pregunta" data-pregunta="1">
+                <p>1. ¿Qué buscás primero cuando llegás a un destino nuevo?</p>
+                <div class="opciones">
+                    <span class="opcion" data-valor="a">El restaurante más top de la ciudad</span>
+                    <span class="opcion" data-valor="b">Un puesto callejero con olorcito rico</span>
+                    <span class="opcion" data-valor="c">El mercado municipal</span>
+                    <span class="opcion" data-valor="d">Una pastelería o heladería</span>
+                </div>
+            </div>
+            <div class="pregunta" data-pregunta="2">
+                <p>2. ¿Con qué bebida acompañás la mayoría de las comidas?</p>
+                <div class="opciones">
+                    <span class="opcion" data-valor="a">Vino de la región</span>
+                    <span class="opcion" data-valor="b">Cerveza artesanal</span>
+                    <span class="opcion" data-valor="c">Jugo natural de frutas</span>
+                    <span class="opcion" data-valor="d">Un café o mate</span>
+                </div>
+            </div>
+            <div class="pregunta" data-pregunta="3">
+                <p>3. ¿Qué foto subirías a Instagram ahora mismo?</p>
+                <div class="opciones">
+                    <span class="opcion" data-valor="a">Un plato emplatado como obra de arte</span>
+                    <span class="opcion" data-valor="b">Una parrilla humeante en la calle</span>
+                    <span class="opcion" data-valor="c">Puestos coloridos de frutas y especias</span>
+                    <span class="opcion" data-valor="d">Un postre con mucho chocolate</span>
+                </div>
+            </div>
+        </div>
+        <button onclick="calcularResultado()" style="margin-top:20px;">Ver mi resultado</button>
+        <div id="resultado"></div>
+    </section>
+
+    <!-- NUEVA SECCIÓN: PRÓXIMOS DESTINOS -->
+    <section id="proximos">
+        <h2>🔜 Próximos destinos</h2>
+        <div class="cuenta-regresiva-caja">
+            <p style="font-size:1.2rem; margin-bottom:10px;">🌍 Nos vamos a <strong>Japón</strong></p>
+            <div class="reloj">
+                <div class="bloque"><span class="numero" id="dias">00</span><span class="etiqueta">Días</span></div>
+                <div class="bloque"><span class="numero" id="horas">00</span><span class="etiqueta">Horas</span></div>
+                <div class="bloque"><span class="numero" id="minutos">00</span><span class="etiqueta">Minutos</span></div>
+                <div class="bloque"><span class="numero" id="segundos">00</span><span class="etiqueta">Segundos</span></div>
+            </div>
+            <p style="color:#aaa; margin-bottom:20px;">Falta poquito para comer ramen como se debe. ¿Tenés algún lugar para recomendarme?</p>
+            <div class="sugerencia-form">
+                <form action="https://formspree.io/f/TU_FORM_ID_PROXIMOS" method="POST">
+                    <input type="text" name="nombre" placeholder="Tu nombre" required>
+                    <input type="text" name="sugerencia" placeholder="Restaurante o ciudad" required>
+                    <button type="submit">Mandar sugerencia</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- NUEVA SECCIÓN: DIARIO DE VIAJE -->
+    <section id="diario">
+        <h2>📖 Diario de viaje</h2>
+        <div class="timeline">
+            <div class="entrada izquierda">
+                <div class="contenido">
+                    <img src="https://picsum.photos/400/250?random=50" alt="Osaka">
+                    <h3>Día 1: Osaka</h3>
+                    <p>Llegamos a Osaka directo al Dotonbori. Probé takoyaki y okonomiyaki. ¡Una bomba!</p>
+                    <a href="https://instagram.com/energiarutera" target="_blank">Ver en Instagram</a>
+                </div>
+            </div>
+            <div class="entrada derecha">
+                <div class="contenido">
+                    <img src="https://picsum.photos/400/250?random=51" alt="Kioto">
+                    <h3>Día 3: Kioto</h3>
+                    <p>Mercado Nishiki: brochetas de mochi, pepino relleno y helado de té verde. Imperdible.</p>
+                    <a href="https://instagram.com/energiarutera" target="_blank">Ver en Instagram</a>
+                </div>
+            </div>
+            <div class="entrada izquierda">
+                <div class="contenido">
+                    <img src="https://picsum.photos/400/250?random=52" alt="Tokio">
+                    <h3>Día 5: Tokio</h3>
+                    <p>Tsukiji a las 6 AM. sushi más fresco imposible. Después, ramen en Shinjuku.</p>
+                    <a href="https://instagram.com/energiarutera" target="_blank">Ver en Instagram</a>
+                </div>
+            </div>
+            <div class="entrada derecha">
+                <div class="contenido">
+                    <img src="https://picsum.photos/400/250?random=53" alt="Hiroshima">
+                    <h3>Día 8: Hiroshima</h3>
+                    <p>Okonomiyaki estilo Hiroshima (con fideos). Increíble la diferencia con el de Osaka.</p>
+                    <a href="https://instagram.com/energiarutera" target="_blank">Ver en Instagram</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN: COLABORACIONES Y PRENSA -->
+    <section id="colaboraciones">
+        <h2>📬 Colaboraciones y prensa</h2>
+        <div class="colab-form">
+            <form action="https://formspree.io/f/TU_FORM_ID_COLAB" method="POST">
+                <input type="text" name="nombre" placeholder="Tu nombre o medio" required>
+                <input type="email" name="email" placeholder="Tu mail" required>
+                <select name="motivo" required>
+                    <option value="">¿Qué tipo de contacto?</option>
+                    <option value="prensa">Prensa / entrevista</option>
+                    <option value="canje">Canje de productos/servicios</option>
+                    <option value="publicidad">Publicidad en el blog/redes</option>
+                    <option value="otro">Otra consulta</option>
+                </select>
+                <textarea name="mensaje" rows="4" placeholder="Contame un poco más..."></textarea>
+                <button type="submit">Enviar mensaje</button>
+            </form>
+        </div>
+    </section>
 
     <footer>
-        © 2024 Energia Rutera · Construido con hambre y amor por los viajes.
+        © 2025 Energía Rutera · Hecho con hambre de viajar y un buen asado.
     </footer>
 
-    <!-- ============ SCRIPTS ============ -->
-    
-    <!-- 1. Leaflet JS (Mapa) -->
+    <!-- SCRIPTS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
-    <!-- 2. Lógica del Mapa -->
     <script>
-        // Inicializar el mapa (centrado en el mundo, vista general)
+        // ===== MAPA =====
         const map = L.map('mapa').setView([20, 0], 2);
-
-        // Capa del mapa (estilo oscuro para que combine)
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             subdomains: 'abcd',
             maxZoom: 19
         }).addTo(map);
 
-        // ===== BASE DE DATOS MANUAL (Simula Google Sheets) =====
-        // Aquí pegarías los datos que el cliente llene.
-        // Puedes conectar esto a Google Sheets con Sheet.best en el futuro.
-        
         const restaurantes = [
-            {
-                nombre: "Ichiran Ramen",
-                ciudad: "Tokio, Japón",
-                lat: 35.6762,
-                lon: 139.6503,
-                nota: "El mejor ramen del mundo. Pedir en la máquina expendedora.",
-                ig: "https://instagram.com/p/ejemplo1"
-            },
-            {
-                nombre: "Pujol",
-                ciudad: "CDMX, México",
-                lat: 19.4326,
-                lon: -99.1332,
-                nota: "Alta cocina mexicana. Imperdible el mole madre.",
-                ig: "https://instagram.com/p/ejemplo2"
-            },
-            {
-                nombre: "Gelateria Dondoli",
-                ciudad: "San Gimignano, Italia",
-                lat: 43.4678,
-                lon: 11.0433,
-                nota: "Gelato campeón mundial. Probé el de azafrán.",
-                ig: "https://instagram.com/p/ejemplo3"
-            },
-            {
-                nombre: "Nusantara",
-                ciudad: "Bali, Indonesia",
-                lat: -8.5069,
-                lon: 115.2625,
-                nota: "Warung local con el mejor Nasi Goreng.",
-                ig: "https://instagram.com/p/ejemplo4"
-            }
+            { nombre: "Don Julio", ciudad: "Buenos Aires, Argentina", lat: -34.5882, lon: -58.4305, nota: "La mejor carne del mundo.", ig: "https://instagram.com/p/ejemplo" },
+            { nombre: "La Mar", ciudad: "Lima, Perú", lat: -12.1214, lon: -77.0300, nota: "Ceviche fresco a morir.", ig: "https://instagram.com/p/ejemplo" },
+            { nombre: "Gaggan", ciudad: "Bangkok, Tailandia", lat: 13.7327, lon: 100.5547, nota: "Cocina india progresiva.", ig: "https://instagram.com/p/ejemplo" }
         ];
 
-        // Icono personalizado (tenedor y cuchillo)
-        const iconoComida = L.divIcon({
-            html: '🍜',
-            className: 'emoji-icon',
-            iconSize: [30, 30],
-            iconAnchor: [15, 15]
+        const icono = L.divIcon({ html: '🍴', className: 'emoji-icon', iconSize: [30,30], iconAnchor: [15,15] });
+        restaurantes.forEach(r => {
+            L.marker([r.lat, r.lon], { icon: icono }).addTo(map)
+                .bindPopup(`<div style="color:#333"><h3>${r.nombre}</h3><p>${r.ciudad}</p><p>${r.nota}</p><a href="${r.ig}" target="_blank">Ver en Instagram</a></div>`);
         });
 
-        // Agregar marcadores al mapa
-        restaurantes.forEach(rest => {
-            const marker = L.marker([rest.lat, rest.lon], { icon: iconoComida }).addTo(map);
-            
-            // Ventana emergente al hacer clic
-            marker.bindPopup(`
-                <div style="font-family: sans-serif; color: #333;">
-                    <h3 style="margin:0 0 5px; color:#f97316;">${rest.nombre}</h3>
-                    <p style="margin:0 0 8px; font-weight:bold;">📍 ${rest.ciudad}</p>
-                    <p style="margin:0 0 10px; font-size:0.9rem;">${rest.nota}</p>
-                    <a href="${rest.ig}" target="_blank" style="background:#f97316; color:white; padding:5px 15px; border-radius:20px; text-decoration:none; font-size:0.8rem; display:inline-block;">Ver en Instagram 📸</a>
-                </div>
-            `);
+        // ===== RECETAS (modales) =====
+        function abrirReceta(id) {
+            document.getElementById('modal-' + id).style.display = 'block';
+        }
+        function cerrarReceta() {
+            document.querySelectorAll('[id^="modal-receta"]').forEach(m => m.style.display = 'none');
+        }
+        window.onclick = function(event) {
+            if (event.target.classList.contains('lightbox') || event.target.matches('[id^="modal-receta"]')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // ===== TEST =====
+        const opciones = document.querySelectorAll('.opcion');
+        opciones.forEach(op => {
+            op.addEventListener('click', function() {
+                const pregunta = this.closest('.pregunta');
+                pregunta.querySelectorAll('.opcion').forEach(o => o.classList.remove('seleccionada'));
+                this.classList.add('seleccionada');
+            });
         });
+
+        function calcularResultado() {
+            const seleccionadas = document.querySelectorAll('.opcion.seleccionada');
+            if (seleccionadas.length < 3) {
+                alert('¡Elegí una opción en cada pregunta, dale!');
+                return;
+            }
+            const valores = Array.from(seleccionadas).map(s => s.dataset.valor);
+            const contador = { a:0, b:0, c:0, d:0 };
+            valores.forEach(v => contador[v]++);
+            const max = Object.keys(contador).reduce((a, b) => contador[a] > contador[b] ? a : b);
+            const resultados = {
+                a: '🍷 <strong>Catador Exigente:</strong> te va la alta cocina y los buenos vinos. Buscás experiencias gourmet que te vuelen la cabeza.',
+                b: '🍢 <strong>Foodie Extremo:</strong> tu debilidad es la comida callejera. Cuanto más a la parrilla y con humo, mejor.',
+                c: '🥑 <strong>Viajero de Mercados:</strong> amás los colores y los sabores frescos. Recorrés ferias y puestos locales.',
+                d: '🍰 <strong>Amante de lo Dulce:</strong> viajás por el mundo persiguiendo postres, helados y cafés de especialidad.'
+            };
+            document.getElementById('resultado').innerHTML = resultados[max];
+            document.getElementById('resultado').classList.add('mostrar');
+        }
+
+        // ===== CUENTA REGRESIVA =====
+        const fechaViaje = new Date("2025-06-30T00:00:00").getTime();
+
+        function actualizarContador() {
+            const ahora = new Date().getTime();
+            const diferencia = fechaViaje - ahora;
+
+            if (diferencia < 0) {
+                document.getElementById("dias").textContent = "00";
+                document.getElementById("horas").textContent = "00";
+                document.getElementById("minutos").textContent = "00";
+                document.getElementById("segundos").textContent = "00";
+                return;
+            }
+
+            const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+            const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+            const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+
+            document.getElementById("dias").textContent = dias < 10 ? "0" + dias : dias;
+            document.getElementById("horas").textContent = horas < 10 ? "0" + horas : horas;
+            document.getElementById("minutos").textContent = minutos < 10 ? "0" + minutos : minutos;
+            document.getElementById("segundos").textContent = segundos < 10 ? "0" + segundos : segundos;
+        }
+
+        setInterval(actualizarContador, 1000);
+        actualizarContador();
     </script>
-
 </body>
 </html>
